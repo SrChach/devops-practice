@@ -3,30 +3,30 @@ locals {
 }
 
 resource "aws_s3_bucket" "example_bucket" {
-    bucket = var.bucket_name
+  bucket = var.bucket_name
 
-    tags = {
-        Environment = var.environment
-        Project = var.project_name
-    }
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
 
 resource "aws_iam_policy_document" "main_policy" {
   statement {
     effect = "Allow"
     actions = [
-        "s3:GetObject"
+      "s3:GetObject"
     ]
     resources = [
-        "${aws_s3_bucket.example_bucket.arn}/*"
+      "${aws_s3_bucket.example_bucket.arn}/*"
     ]
     condition {
-      test = "IpAddress"
+      test     = "IpAddress"
       variable = "aws:SourceIp"
-      values = local.whitelist_cidr
+      values   = local.whitelist_cidr
     }
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["*"]
     }
   }
@@ -39,7 +39,7 @@ resource "aws_s3_bucket_policy" "main_policy_bucket" {
 
 resource "aws_s3_object" "initial_html_file" {
   bucket = aws_s3_bucket.example_bucket.id
-  key = "hello-world"
+  key    = "hello-world"
   source = "demo-file.html"
 
   content_type = "text/html"
