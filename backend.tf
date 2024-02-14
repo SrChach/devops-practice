@@ -3,6 +3,7 @@ terraform {
      bucket = "srchach-base"
      key    = "apps"
      region = "us-east-2"
+     dynamodb_table = "srchach-dynamotf"
    }
 }
 
