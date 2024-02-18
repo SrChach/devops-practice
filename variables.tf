@@ -13,3 +13,11 @@ variable "bucket_name" {
 variable "dynamodb_name" {
   type = string
 }
+
+variable "rds_ropa_username" {
+  type = string
+}
+
+variable "rds_ropa_pass" {
+  type = string
+}

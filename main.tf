@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "example_bucket" {
 resource "aws_s3_object" "initial_html_file" {
   bucket = aws_s3_bucket.example_bucket.id
   key    = "hello-world.html"
-  source = "index-file.html"
+  source = "demo-file.html"
 
   content_type = "text/html"
 }
