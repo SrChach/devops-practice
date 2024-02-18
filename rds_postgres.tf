@@ -14,11 +14,11 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-resource "aws_db_instance" "ropa-postgres-db" {
+resource "aws_db_instance" "ropa-postgres-instance" {
   allocated_storage    = 10
   engine               = "postgres"
   engine_version       = "15"
-  identifier           = "ropa-postgres-db"
+  identifier           = "ropa-postgres-instance"
   instance_class       = "db.t3.micro"
   password             = var.rds_ropa_pass
   skip_final_snapshot  = true
@@ -29,28 +29,40 @@ resource "aws_db_instance" "ropa-postgres-db" {
   apply_immediately    = true
 }
 
-output "security_group_id" {
-  value       = aws_security_group.rds_sg.id
-}
-output "db_instance_endpoint" {
-  value       = aws_db_instance.ropa-postgres-db.endpoint
-}
-
+# Split on another file
 provider "postgresql" {
-  host            = aws_db_instance.ropa-postgres-db.address
+  host            = aws_db_instance.ropa-postgres-instance.address
   port            = 5432
-  username        = aws_db_instance.ropa-postgres-db.username
-  password        = aws_db_instance.ropa-postgres-db.password
+  username        = aws_db_instance.ropa-postgres-instance.username
+  password        = aws_db_instance.ropa-postgres-instance.password
   sslmode         = "require"
   connect_timeout = 15
 }
 
-resource "postgresql_schema" "ropa-main" {
-  name = "ropa_main_db"
+resource "postgresql_database" "ropa-postgres-db" {
+  name              = "ropa-postgres-db"
+  owner             = "postgres"
+  template          = "template0"
+  lc_collate        = "C"
+  connection_limit  = -1
+  allow_connections = true
+}
+
+#resource "postgresql_schema" "ropa-main" {
+#  name = "ropa_main_db"
+#}
+
+
+output "security_group_id" {
+  value       = aws_security_group.rds_sg.id
+}
+
+output "db_instance_endpoint" {
+  value       = aws_db_instance.ropa-postgres-instance.endpoint
 }
 
 output "rds_address" {
   description = "RDS address"
-  value       = aws_db_instance.ropa-postgres-db.address
+  value       = aws_db_instance.ropa-postgres-instance.address
 }
 
