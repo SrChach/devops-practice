@@ -36,7 +36,6 @@ output "db_instance_endpoint" {
   value       = aws_db_instance.ropa-postgres-db.endpoint
 }
 
-/*
 provider "postgresql" {
   host            = aws_db_instance.ropa-postgres-db.address
   port            = 5432
@@ -54,5 +53,4 @@ output "rds_address" {
   description = "RDS address"
   value       = aws_db_instance.ropa-postgres-db.address
 }
-*/
 
