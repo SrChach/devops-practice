@@ -14,6 +14,22 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
+resource "aws_security_group" "mysql_sg" {
+  name = "mysql_sg"
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_db_instance" "ropa-postgres-instance" {
   allocated_storage    = 10
   engine               = "postgres"
@@ -26,6 +42,22 @@ resource "aws_db_instance" "ropa-postgres-instance" {
   publicly_accessible  = true
   username             = var.rds_ropa_username
   vpc_security_group_ids = ["${aws_security_group.rds_sg.id}"]
+  apply_immediately    = true
+}
+
+# Techneek Mysql
+resource "aws_db_instance" "techneek-mysql-instance" {
+  allocated_storage    = 10
+  engine               = "mysql"
+  engine_version       = "5.7"
+  identifier           = "techneek-mysql-instance"
+  instance_class       = "db.t3.micro"
+  password             = var.rds_ropa_pass
+  skip_final_snapshot  = true
+  storage_encrypted    = false
+  publicly_accessible  = true
+  username             = var.rds_ropa_username
+  vpc_security_group_ids = ["${aws_security_group.mysql_sg.id}"]
   apply_immediately    = true
 }
 
@@ -48,9 +80,6 @@ resource "postgresql_database" "ropa-postgres-db" {
   allow_connections = true
 }
 
-#resource "postgresql_schema" "ropa-main" {
-#  name = "ropa_main_db"
-#}
 
 
 output "security_group_id" {
